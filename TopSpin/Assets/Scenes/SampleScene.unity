@@ -4995,7 +4995,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ad2d4d6ee67d6b45885b3c75c92a40f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 100
+  rotationSpeed: 500
+  t_list:
+  - {fileID: 1635968846}
+  - {fileID: 694915395}
+  - {fileID: 567296258}
+  - {fileID: 1144919967}
   rotando: 0
 --- !u!58 &1387536886
 CircleCollider2D:

@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class CirculoMedio : MonoBehaviour
 {
     private float targetRotation;
-    public float rotationSpeed = 100f;
+    public float rotationSpeed = 200f;
+    [SerializeField] private List<TextMeshPro> t_list;
     [SerializeField] private bool rotando;
     // Start is called before the first frame update
     void Start()
@@ -20,6 +22,19 @@ public class CirculoMedio : MonoBehaviour
         {
             targetRotation += 180f;  // Incrementar 180 grados al objetivo de rotación
             rotando = true;
+        }
+
+        if (t_list.Count == 4)
+        {
+            string text1 = t_list[0].text;
+            string text2 = t_list[1].text;
+            string text3 = t_list[2].text;
+            string text4 = t_list[3].text;
+
+            t_list[0].text = text4;
+            t_list[1].text = text3;
+            t_list[2].text = text2;
+            t_list[3].text = text1;
         }
     }
 
@@ -39,4 +54,5 @@ public class CirculoMedio : MonoBehaviour
             }
         }
     }
+
 }
