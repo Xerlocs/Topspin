@@ -7,12 +7,14 @@ public class CirculoMedio : MonoBehaviour
 {
     private float targetRotation;
     public float rotationSpeed = 200f;
+    private CheckWin checkWin;
     [SerializeField] private List<TextMeshPro> t_list;
     [SerializeField] private bool rotando;
     // Start is called before the first frame update
     void Start()
     {
         targetRotation = transform.eulerAngles.z;
+        checkWin = FindAnyObjectByType<CheckWin>();
     }
 
     void OnMouseDown()
@@ -36,6 +38,8 @@ public class CirculoMedio : MonoBehaviour
             t_list[2].text = text2;
             t_list[3].text = text1;
         }
+
+        checkWin.CheckIfGameCompleted();
     }
 
     // Update is called once per frame
