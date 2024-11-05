@@ -41,9 +41,5 @@ public class CheckWin : MonoBehaviour
             Debug.Log("¡Juego completado! Los números están en el orden correcto.");
             // Aquí puedes agregar lógica adicional para lo que sucede cuando el juego está terminado
         }
-        else
-        {
-            Debug.Log("El juego aún no está completado.");
-        }
     }
 }

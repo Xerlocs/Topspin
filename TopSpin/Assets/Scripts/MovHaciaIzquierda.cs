@@ -28,10 +28,7 @@ public class MovHaciaIzquierda : MonoBehaviour
 
             list[list.Count - 1].text = primerNum;
         }
-    }
 
-    public void prueba()
-    {
-        Debug.Log("hoa");
+        checkWin.CheckIfGameCompleted();
     }
 }

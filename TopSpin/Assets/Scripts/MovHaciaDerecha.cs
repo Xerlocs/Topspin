@@ -29,5 +29,7 @@ public class MovHaciaDerecha : MonoBehaviour
             list[0].text = ultimoNum;
 
         }
+
+        checkWin.CheckIfGameCompleted();
     }
 }
