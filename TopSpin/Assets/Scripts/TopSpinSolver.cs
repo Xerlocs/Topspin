@@ -8,35 +8,8 @@ public class TopSpinSolver : MonoBehaviour
     public List<TextMeshPro> textMeshProList; // Lista de los TextMeshPro que contienen los números
     public int windowSize = 4; // Tamaño de la ventana que se puede revertir
 
-    // Clase para representar un estado del puzzle
-    private class PuzzleState
-    {
-        public List<int> Numbers; // Disposición actual de los números
-        public PuzzleState Parent; // Estado anterior para trazar la solución
-        public string Move; // Movimiento realizado para llegar a este estado
-
-        public PuzzleState(List<int> numbers, PuzzleState parent = null, string move = "")
-        {
-            Numbers = new List<int>(numbers);
-            Parent = parent;
-            Move = move;
-        }
-
-        public override bool Equals(object obj)
-        {
-            if (obj is PuzzleState other)
-                return Numbers.SequenceEqual(other.Numbers);
-            return false;
-        }
-
-        public override int GetHashCode()
-        {
-            return string.Join(",", Numbers).GetHashCode();
-        }
-    }
-
-    // Método que se llama al presionar el botón para resolver el puzzle
-    public void OnSolveButtonPressed()
+    // Método para ejecutar BFS y buscar solución después de la randomización
+    public void FindSolutionAfterRandomization()
     {
         List<string> solution = SolvePuzzle();
         if (solution != null)
@@ -164,4 +137,32 @@ public class TopSpinSolver : MonoBehaviour
         path.Reverse();
         return path;
     }
+
+    // Clase para representar un estado del puzzle
+    private class PuzzleState
+    {
+        public List<int> Numbers;
+        public PuzzleState Parent;
+        public string Move;
+
+        public PuzzleState(List<int> numbers, PuzzleState parent = null, string move = "")
+        {
+            Numbers = new List<int>(numbers);
+            Parent = parent;
+            Move = move;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is PuzzleState other)
+                return Numbers.SequenceEqual(other.Numbers);
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return string.Join(",", Numbers).GetHashCode();
+        }
+    }
 }
+

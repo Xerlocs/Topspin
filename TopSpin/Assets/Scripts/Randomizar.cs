@@ -6,7 +6,12 @@ using UnityEngine;
 public class Randomizar : MonoBehaviour
 {
     public List<TextMeshPro> t_randomList;
+    private TopSpinSolver bfs;
 
+    private void Start()
+    {
+        bfs = FindAnyObjectByType<TopSpinSolver>();
+    }
     // Método para randomizar las posiciones de los textos
     public void RandomizarPosicion()
     {
@@ -27,6 +32,8 @@ public class Randomizar : MonoBehaviour
         {
             t_randomList[i].text = texts[i];
         }
+
+        bfs.FindSolutionAfterRandomization();
     }
 
     // Método auxiliar para mezclar la lista
