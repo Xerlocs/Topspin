@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using TMPro;
 using System.Linq;
@@ -17,21 +18,26 @@ public class TopSpinSolver : MonoBehaviour
         List<string> solution = SolvePuzzle();
         if (solution != null)
         {
-            Debug.Log("Solución encontrada:");
+            UnityEngine.Debug.Log("¡Solución encontrada!");
             foreach (string move in solution)
             {
-                Debug.Log(move);
+                UnityEngine.Debug.Log(move);
             }
         }
         else
         {
-            Debug.Log("No se encontró solución.");
+            UnityEngine.Debug.Log("No se encontró solución.");
         }
     }
 
     // Método para resolver el puzzle usando BFS
     private List<string> SolvePuzzle()
     {
+        // Estadísticas de rendimiento
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
+        int nodesVisited = 0;
+
         List<int> startState = GetCurrentState();
         List<int> goalState = GenerateGoalState();
 
@@ -45,9 +51,20 @@ public class TopSpinSolver : MonoBehaviour
         while (queue.Count > 0)
         {
             PuzzleState currentState = queue.Dequeue();
+            nodesVisited++;
 
             if (currentState.Numbers.SequenceEqual(goalState))
+            {
+                stopwatch.Stop();
+                double elapsedSeconds = stopwatch.Elapsed.TotalSeconds;
+
+                // Imprimir estadísticas de rendimiento
+                UnityEngine.Debug.Log($"Tiempo de ejecución: {elapsedSeconds} segundos");
+                UnityEngine.Debug.Log($"Nodos visitados: {nodesVisited}");
+                UnityEngine.Debug.Log($"Nodos procesados por segundo: {nodesVisited / elapsedSeconds}");
+
                 return GetSolutionPath(currentState);
+            }
 
             foreach (var neighbor in GetNeighbors(currentState))
             {
@@ -58,6 +75,15 @@ public class TopSpinSolver : MonoBehaviour
                 }
             }
         }
+
+        stopwatch.Stop();
+        double finalElapsedSeconds = stopwatch.Elapsed.TotalSeconds;
+
+        // Imprimir estadísticas de rendimiento si no se encontró solución
+        UnityEngine.Debug.Log("No se encontró solución.");
+        UnityEngine.Debug.Log($"Tiempo de ejecución: {finalElapsedSeconds} segundos");
+        UnityEngine.Debug.Log($"Nodos visitados: {nodesVisited}");
+        UnityEngine.Debug.Log($"Nodos procesados por segundo: {nodesVisited / finalElapsedSeconds}");
 
         return null; // No se encontró solución
     }
@@ -171,4 +197,5 @@ public class TopSpinSolver : MonoBehaviour
         }
     }
 }
+
 
