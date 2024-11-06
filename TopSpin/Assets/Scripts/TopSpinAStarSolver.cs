@@ -1,16 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class TopSpinAStarSolver : MonoBehaviour
 {
-    public int[] initialConfiguration;
-    public int segmentSize = 4;
-
-    private HashSet<string> visited = new HashSet<string>();
     public List<TextMeshPro> textMeshProList; // Lista de TextMeshPro con la configuración inicial
     public Button solveButton; // Referencia al botón en la UI
 
@@ -32,50 +29,99 @@ public class TopSpinAStarSolver : MonoBehaviour
 
     private IEnumerator FindSolutionCoroutine(int[] initialConfig)
     {
-        PriorityQueue<Node> openSet = new PriorityQueue<Node>();
-        HashSet<string> visited = new HashSet<string>();
-        Dictionary<string, int> costSoFar = new Dictionary<string, int>();
+        // Inicializar estadísticas de rendimiento
+        Stopwatch stopwatch = new Stopwatch();
+        stopwatch.Start();
 
-        Node startNode = new Node(initialConfig, null, 0, Heuristic(initialConfig));
+        int nodesVisited = 0;
+        int nodesProcessed = 0;
+
+        // Configurar estructuras para el algoritmo A*
+        PriorityQueue<Node> openSet = new PriorityQueue<Node>();
+        HashSet<int> visited = new HashSet<int>();
+        Dictionary<int, int> costSoFar = new Dictionary<int, int>();
+
+        int initialHash = GetHash(initialConfig);
+        Node startNode = new Node(initialConfig, null, 0, Heuristic(initialConfig), "Inicio");
         openSet.Enqueue(startNode, startNode.F);
-        costSoFar[ArrayToString(initialConfig)] = 0;
+        costSoFar[initialHash] = 0;
+        visited.Add(initialHash);
 
         while (openSet.Count > 0)
         {
+            nodesProcessed++;
             Node current = openSet.Dequeue();
+            int currentHash = GetHash(current.Config);
 
+            // Verificar si se alcanzó el objetivo
             if (IsGoal(current.Config))
             {
-                Debug.Log("¡Solución encontrada!");
-                // Procesa el resultado aquí, como actualizar la UI o mostrar la solución
+                stopwatch.Stop();
+                UnityEngine.Debug.Log("¡Solución encontrada!");
+
+                List<string> solutionPath = GetSolutionPath(current);
+                foreach (string step in solutionPath)
+                {
+                    UnityEngine.Debug.Log(step);
+                }
+
+                // Imprimir estadísticas
+                double elapsedSeconds = stopwatch.Elapsed.TotalSeconds;
+                UnityEngine.Debug.Log($"Tiempo de ejecución: {elapsedSeconds} segundos");
+                UnityEngine.Debug.Log($"Nodos visitados: {nodesVisited}");
+                UnityEngine.Debug.Log($"Nodos procesados: {nodesProcessed}");
+                UnityEngine.Debug.Log($"Nodos procesados por segundo: {nodesProcessed / elapsedSeconds}");
+
                 yield break;
             }
 
-            foreach (int[] neighborConfig in GetNeighbors(current.Config))
+            // Marcar el nodo actual como visitado
+            nodesVisited++;
+
+            // Generar y procesar los vecinos
+            foreach (var (neighborConfig, move) in GetNeighbors(current.Config))
             {
-                string neighborString = ArrayToString(neighborConfig);
+                int neighborHash = GetHash(neighborConfig);
                 int newCost = current.G + 1;
 
-                if (!costSoFar.ContainsKey(neighborString) || newCost < costSoFar[neighborString])
+                if (!costSoFar.ContainsKey(neighborHash) || newCost < costSoFar[neighborHash])
                 {
-                    costSoFar[neighborString] = newCost;
+                    costSoFar[neighborHash] = newCost;
                     int priority = newCost + Heuristic(neighborConfig);
-                    Node neighborNode = new Node(neighborConfig, current, newCost, priority);
+                    Node neighborNode = new Node(neighborConfig, current, newCost, priority, move);
                     openSet.Enqueue(neighborNode, priority);
+
+                    // Agregar al conjunto de visitados
+                    visited.Add(neighborHash);
                 }
             }
 
-            // Pausa el bucle para el próximo cuadro
+            // Pausar para el próximo cuadro
             yield return null;
         }
 
-        Debug.Log("No se encontró solución.");
+        // Si no se encontró solución
+        stopwatch.Stop();
+        UnityEngine.Debug.Log("No se encontró solución.");
+        double finalElapsedSeconds = stopwatch.Elapsed.TotalSeconds;
+        UnityEngine.Debug.Log($"Tiempo de ejecución: {finalElapsedSeconds} segundos");
+        UnityEngine.Debug.Log($"Nodos visitados: {nodesVisited}");
+        UnityEngine.Debug.Log($"Nodos procesados: {nodesProcessed}");
+        UnityEngine.Debug.Log($"Nodos procesados por segundo: {nodesProcessed / finalElapsedSeconds}");
+    }
+
+    private int GetHash(int[] configuration)
+    {
+        int hash = 17;
+        foreach (var val in configuration)
+        {
+            hash = hash * 31 + val;
+        }
+        return hash;
     }
 
     private bool IsGoal(int[] configuration)
     {
-        // Implementa la verificación de la meta aquí
-        // Por ejemplo, verificar si el arreglo está ordenado
         for (int i = 0; i < configuration.Length - 1; i++)
         {
             if (configuration[i] > configuration[i + 1])
@@ -84,36 +130,44 @@ public class TopSpinAStarSolver : MonoBehaviour
         return true;
     }
 
-    private List<int[]> GetNeighbors(int[] configuration)
+    private List<(int[], string)> GetNeighbors(int[] configuration)
     {
-        // Implementa la lógica para obtener vecinos aquí
-        List<int[]> neighbors = new List<int[]>();
+        List<(int[], string)> neighbors = new List<(int[], string)>();
         int k = 3;
 
         for (int i = 0; i < configuration.Length - k; i++)
         {
             int[] newConfig = (int[])configuration.Clone();
             Array.Reverse(newConfig, i, k);
-            neighbors.Add(newConfig);
+            neighbors.Add((newConfig, $"Revertir del índice {i} al índice {i + k - 1}"));
         }
         return neighbors;
     }
 
     private int Heuristic(int[] configuration)
     {
-        // Define la heurística aquí
-        int misplacedCount = 0;
+        int heuristicValue = 0;
         for (int i = 0; i < configuration.Length - 1; i++)
         {
             if (configuration[i] + 1 != configuration[i + 1])
-                misplacedCount++;
+            {
+                heuristicValue += Mathf.Abs(configuration[i] - (i + 1));
+            }
         }
-        return misplacedCount;
+        return heuristicValue;
     }
 
-    private string ArrayToString(int[] configuration)
+
+    private List<string> GetSolutionPath(Node node)
     {
-        return string.Join(",", configuration);
+        List<string> path = new List<string>();
+        while (node != null)
+        {
+            path.Add(node.Move);
+            node = node.Parent;
+        }
+        path.Reverse();
+        return path;
     }
 
     private class Node
@@ -122,13 +176,15 @@ public class TopSpinAStarSolver : MonoBehaviour
         public Node Parent;
         public int G;
         public int F;
+        public string Move;
 
-        public Node(int[] config, Node parent, int g, int f)
+        public Node(int[] config, Node parent, int g, int f, string move)
         {
             Config = config;
             Parent = parent;
             G = g;
             F = f;
+            Move = move;
         }
     }
 }

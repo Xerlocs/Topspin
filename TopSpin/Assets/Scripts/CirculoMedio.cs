@@ -42,6 +42,31 @@ public class CirculoMedio : MonoBehaviour
         checkWin.CheckIfGameCompleted();
     }
 
+    public void Rotar()
+    {
+        // Solo iniciar la rotación si no se está rotando actualmente
+        if (!rotando)
+        {
+            targetRotation += 180f;  // Incrementar 180 grados al objetivo de rotación
+            rotando = true;
+        }
+
+        if (t_list.Count == 4)
+        {
+            string text1 = t_list[0].text;
+            string text2 = t_list[1].text;
+            string text3 = t_list[2].text;
+            string text4 = t_list[3].text;
+
+            t_list[0].text = text4;
+            t_list[1].text = text3;
+            t_list[2].text = text2;
+            t_list[3].text = text1;
+        }
+
+        checkWin.CheckIfGameCompleted();
+    }
+
     // Update is called once per frame
     void Update()
     {

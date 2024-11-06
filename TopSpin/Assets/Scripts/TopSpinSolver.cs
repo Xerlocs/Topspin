@@ -7,6 +7,9 @@ public class TopSpinSolver : MonoBehaviour
 {
     public List<TextMeshPro> textMeshProList; // Lista de los TextMeshPro que contienen los números
     public int windowSize = 4; // Tamaño de la ventana que se puede revertir
+    public CirculoMedio rotar;
+    public MovHaciaDerecha derecha;
+    public MovHaciaIzquierda izquierda;
 
     // Método para ejecutar BFS y buscar solución después de la randomización
     public void FindSolutionAfterRandomization()
@@ -100,6 +103,7 @@ public class TopSpinSolver : MonoBehaviour
 
     private void RotateRight(List<int> list)
     {
+        derecha.MoverDerecha();
         int last = list[list.Count - 1];
         list.RemoveAt(list.Count - 1);
         list.Insert(0, last);
@@ -107,6 +111,7 @@ public class TopSpinSolver : MonoBehaviour
 
     private void RotateLeft(List<int> list)
     {
+        izquierda.MoverIzquierda();
         int first = list[0];
         list.RemoveAt(0);
         list.Add(first);
@@ -114,6 +119,7 @@ public class TopSpinSolver : MonoBehaviour
 
     private void ReverseWindow(List<int> list)
     {
+        rotar.Rotar();
         int start = 0;
         int end = Mathf.Min(windowSize - 1, list.Count - 1);
         while (start < end)

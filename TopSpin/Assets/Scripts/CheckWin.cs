@@ -2,10 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CheckWin : MonoBehaviour
 {
     public List<TextMeshPro> t_winlist;
+    public GameObject victoria;
 
     // Método para verificar si los números están en el orden correcto
     public bool IsGameCompleted()
@@ -38,6 +40,7 @@ public class CheckWin : MonoBehaviour
     {
         if (IsGameCompleted())
         {
+            victoria.SetActive(true);
             Debug.Log("¡Juego completado! Los números están en el orden correcto.");
             // Aquí puedes agregar lógica adicional para lo que sucede cuando el juego está terminado
         }
