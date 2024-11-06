@@ -33,7 +33,7 @@ public class Randomizar : MonoBehaviour
             t_randomList[i].text = texts[i];
         }
 
-        bfs.FindSolutionAfterRandomization();
+        //bfs.FindSolutionAfterRandomization();
     }
 
     // Método auxiliar para mezclar la lista
