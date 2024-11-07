@@ -11,6 +11,7 @@ public class TopSpinSolver : MonoBehaviour
     public CirculoMedio rotar;
     public MovHaciaDerecha derecha;
     public MovHaciaIzquierda izquierda;
+    public TextMeshProUGUI info;
 
     // Método para ejecutar BFS y buscar solución después de la randomización
     public void FindSolutionAfterRandomization()
@@ -59,9 +60,7 @@ public class TopSpinSolver : MonoBehaviour
                 double elapsedSeconds = stopwatch.Elapsed.TotalSeconds;
 
                 // Imprimir estadísticas de rendimiento
-                UnityEngine.Debug.Log($"Tiempo de ejecución: {elapsedSeconds} segundos");
-                UnityEngine.Debug.Log($"Nodos visitados: {nodesVisited}");
-                UnityEngine.Debug.Log($"Nodos procesados por segundo: {nodesVisited / elapsedSeconds}");
+                info.text = $"Tiempo de ejecución: {elapsedSeconds} segundos, Nodos visitados: {nodesVisited}, Nodos procesados por segundo: {nodesVisited / elapsedSeconds}";
 
                 return GetSolutionPath(currentState);
             }
@@ -81,9 +80,7 @@ public class TopSpinSolver : MonoBehaviour
 
         // Imprimir estadísticas de rendimiento si no se encontró solución
         UnityEngine.Debug.Log("No se encontró solución.");
-        UnityEngine.Debug.Log($"Tiempo de ejecución: {finalElapsedSeconds} segundos");
-        UnityEngine.Debug.Log($"Nodos visitados: {nodesVisited}");
-        UnityEngine.Debug.Log($"Nodos procesados por segundo: {nodesVisited / finalElapsedSeconds}");
+        info.text = $"Tiempo de ejecución: {finalElapsedSeconds} segundos, Nodos visitados: {nodesVisited}, Nodos procesados por segundo: {nodesVisited / finalElapsedSeconds}";
 
         return null; // No se encontró solución
     }

@@ -9,6 +9,7 @@ public class TopSpinIDASolver : MonoBehaviour
     public List<TextMeshPro> textMeshProList; // Lista de TextMeshPro con la configuración inicial
     public Button solveButton; // Referencia al botón en la UI
     public int windowSize = 4; // Tamaño de la ventana de reversión
+    public TextMeshProUGUI info;
 
     private void Start()
     {
@@ -56,10 +57,7 @@ public class TopSpinIDASolver : MonoBehaviour
                 stopwatch.Stop();
                 double elapsedSeconds = stopwatch.Elapsed.TotalSeconds;
 
-                UnityEngine.Debug.Log($"Tiempo de ejecución: {elapsedSeconds} segundos");
-                UnityEngine.Debug.Log($"Nodos visitados: {nodesVisited}");
-                UnityEngine.Debug.Log($"Nodos procesados: {nodesProcessed}");
-                UnityEngine.Debug.Log($"Nodos procesados por segundo: {nodesProcessed / elapsedSeconds}");
+                info.text = $"Tiempo de ejecución: {elapsedSeconds} segundos, Nodos visitados: {nodesVisited}, Nodos procesados: {nodesProcessed}, Nodos procesados por segundo: {nodesProcessed / elapsedSeconds}";
 
                 return path;
             }
@@ -69,10 +67,7 @@ public class TopSpinIDASolver : MonoBehaviour
                 UnityEngine.Debug.Log("No se encontró solución.");
                 double finalElapsedSeconds = stopwatch.Elapsed.TotalSeconds;
 
-                UnityEngine.Debug.Log($"Tiempo de ejecución: {finalElapsedSeconds} segundos");
-                UnityEngine.Debug.Log($"Nodos visitados: {nodesVisited}");
-                UnityEngine.Debug.Log($"Nodos procesados: {nodesProcessed}");
-                UnityEngine.Debug.Log($"Nodos procesados por segundo: {nodesProcessed / finalElapsedSeconds}");
+                info.text = $"Tiempo de ejecución: {finalElapsedSeconds} segundos, Nodos visitados: {nodesVisited}, Nodos procesados: {nodesProcessed}, Nodos procesados por segundo: {nodesProcessed / finalElapsedSeconds}";
 
                 return null;
             }
